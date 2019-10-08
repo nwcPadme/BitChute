@@ -1,6 +1,7 @@
 package com.example.bitchute;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,7 @@ public class splashactivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent (splashactivity.this,MainActivity.class);
+                Intent intent = new Intent(splashactivity.this, MainActivity.class);
                 startActivity(intent);
             }
         }, Splash_time);
