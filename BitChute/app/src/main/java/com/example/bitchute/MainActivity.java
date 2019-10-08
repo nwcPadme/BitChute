@@ -37,12 +37,12 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private WebView mywebView;
     private SwipeRefreshLayout sr;
-    private static String file_type = "*/*"; // file types to be allowed for upload
-    private boolean multiple_files = true; // allowing multiple file upload
+    private static String file_type = "*/*";    // file types to be allowed for upload
+    private boolean multiple_files = true;         // allowing multiple file upload
     private static final String TAG = MainActivity.class.getSimpleName();
-    private String cam_file_data = null; // for storing camera file information
-    private ValueCallback < Uri > file_data; // data/header received after file selection
-    private ValueCallback < Uri[] > file_path; // received file(s) temp. location
+    private String cam_file_data = null;        // for storing camera file information
+    private ValueCallback<Uri> file_data;       // data/header received after file selection
+    private ValueCallback<Uri[]> file_path;     // received file(s) temp. location
     private static String webview_url = "https://bitchute.com";
     private final static int file_req_code = 1;
 
@@ -67,9 +67,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         return;
                     }
                     if (null == intent.getClipData() && null == intent.getDataString() && null != cam_file_data) {
-                        results = new Uri[] {
-                                Uri.parse(cam_file_data)
-                        };
+                        results = new Uri[]{Uri.parse(cam_file_data)};
                     } else {
                         if (null != intent.getClipData()) { // checking if multiple files selected or not
                             final int numSelectedFiles = intent.getClipData().getItemCount();
@@ -78,9 +76,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 results[i] = intent.getClipData().getItemAt(i).getUri();
                             }
                         } else {
-                            results = new Uri[] {
-                                    Uri.parse(intent.getDataString())
-                            };
+                            results = new Uri[]{Uri.parse(intent.getDataString())};
                         }
                     }
                 }
@@ -97,10 +93,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    @SuppressLint({
-            "SetJavaScriptEnabled",
-            "WrongViewCast"
-    })
+    @SuppressLint({"SetJavaScriptEnabled", "WrongViewCast"})
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             /*-- openFileChooser is not a public Android API and has never been part of the SDK. --*/
 
             /*-- handling input[type="file"] requests for android API 16+ --*/
-            public void openFileChooser(ValueCallback < Uri > uploadMsg, String acceptType, String capture) {
+            public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
                 file_data = uploadMsg;
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -156,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
 
             /*-- handling input[type="file"] requests for android API 21+ --*/
-            public boolean onShowFileChooser(WebView webView, ValueCallback < Uri[] > filePathCallback, FileChooserParams fileChooserParams) {
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                 if (file_permission() && Build.VERSION.SDK_INT >= 21) {
                     file_path = filePathCallback;
                     Intent takePictureIntent = null;
@@ -167,9 +160,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     /*-- checking the accept parameter to determine which intent(s) to include --*/
                     paramCheck:
-                    for (String acceptTypes: fileChooserParams.getAcceptTypes()) {
+                    for (String acceptTypes : fileChooserParams.getAcceptTypes()) {
                         String[] splitTypes = acceptTypes.split(", ?+"); // although it's an array, it still seems to be the whole value; split it out into chunks so that we can detect multiple values
-                        for (String acceptType: splitTypes) {
+                        for (String acceptType : splitTypes) {
                             switch (acceptType) {
                                 case "*/*":
                                     includePhoto = true;
@@ -185,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     }
 
-                    if (fileChooserParams.getAcceptTypes().length == 0) { //no `accept` parameter was specified, allow both photo and video
+                    if (fileChooserParams.getAcceptTypes().length == 0) {   //no `accept` parameter was specified, allow both photo and video
                         includePhoto = true;
                         includeVideo = true;
                     }
@@ -236,18 +229,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     Intent[] intentArray;
                     if (takePictureIntent != null && takeVideoIntent != null) {
-                        intentArray = new Intent[] {
-                                takePictureIntent,
-                                takeVideoIntent
-                        };
+                        intentArray = new Intent[]{takePictureIntent, takeVideoIntent};
                     } else if (takePictureIntent != null) {
-                        intentArray = new Intent[] {
-                                takePictureIntent
-                        };
+                        intentArray = new Intent[]{takePictureIntent};
                     } else if (takeVideoIntent != null) {
-                        intentArray = new Intent[] {
-                                takeVideoIntent
-                        };
+                        intentArray = new Intent[]{takeVideoIntent};
                     } else {
                         intentArray = new Intent[0];
                     }
@@ -275,9 +261,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     /*-- checking and asking for required file permissions --*/
     public boolean file_permission() {
         if (Build.VERSION.SDK_INT >= 23 && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA
-            }, 1);
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1);
             return false;
         } else {
             return true;
