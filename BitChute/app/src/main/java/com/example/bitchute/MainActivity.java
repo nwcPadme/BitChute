@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } else {
             if (requestCode == file_req_code) {
                 if (null == file_data) return;
-                Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
+                Uri result = intent == null || resultCode != RESULT_OK ? null: intent.getData();
                 file_data.onReceiveValue(result);
                 file_data = null;
             }
@@ -111,24 +111,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mywebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = mywebView.getSettings();
 
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setSupportZoom(true);
-        webSettings.setDatabaseEnabled(true);
-        webSettings.setBuiltInZoomControls(false);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        webSettings.setDomStorageEnabled(true);
-
-        mywebView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        mywebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        mywebView.setScrollbarFadingEnabled(true);
-        mywebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        mywebView.getSettings().setAppCacheEnabled(true);
-        mywebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-        mywebView.setWebViewClient(new Callback());
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setLoadWithOverviewMode(true);
+            webSettings.setUseWideViewPort(true);
+            webSettings.setSupportZoom(true);
+            webSettings.setDatabaseEnabled(true);
+            webSettings.setBuiltInZoomControls(false);
+            webSettings.setAllowFileAccess(true);
+            webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+            webSettings.setDomStorageEnabled(true);
 
         if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode(0);
@@ -139,7 +131,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             mywebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
 
+        mywebView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        mywebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        mywebView.setScrollbarFadingEnabled(true);
+        mywebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        mywebView.getSettings().setAppCacheEnabled(true);
+        mywebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+        mywebView.setWebViewClient(new Callback());
         mywebView.loadUrl(webview_url);
+        
+
         mywebView.setWebChromeClient(new WebChromeClient() {
 
             /*-- openFileChooser is not a public Android API and has never been part of the SDK. --*/
@@ -167,8 +168,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     boolean includePhoto = false;
 
                     /*-- checking the accept parameter to determine which intent(s) to include --*/
-                    paramCheck:
-                    for (String acceptTypes: fileChooserParams.getAcceptTypes()) {
+                    paramCheck: for (String acceptTypes: fileChooserParams.getAcceptTypes()) {
                         String[] splitTypes = acceptTypes.split(", ?+"); // although it's an array, it still seems to be the whole value; split it out into chunks so that we can detect multiple values
                         for (String acceptType: splitTypes) {
                             switch (acceptType) {
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             try {
                                 photoFile = create_image();
                                 takePictureIntent.putExtra("PhotoPath", cam_file_data);
-                            } catch (IOException ex) {
+                            } catch(IOException ex) {
                                 Log.e(TAG, "Image file creation failed", ex);
                             }
                             if (photoFile != null) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             File videoFile = null;
                             try {
                                 videoFile = create_video();
-                            } catch (IOException ex) {
+                            } catch(IOException ex) {
                                 Log.e(TAG, "Video file creation failed", ex);
                             }
                             if (videoFile != null) {
@@ -277,24 +277,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public boolean file_permission() {
         if (Build.VERSION.SDK_INT >= 23 && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] {
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA
-            }, 1);
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA
+                    },
+                    1);
             return false;
         } else {
             return true;
         }
     }
 
-    private File create_image() throws IOException {
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    private File create_image() throws IOException {@SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "img_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
-    private File create_video() throws IOException {
-        @SuppressLint("SimpleDateFormat")
-        String file_name = new SimpleDateFormat("yyyy_mm_ss").format(new Date());
+    private File create_video() throws IOException {@SuppressLint("SimpleDateFormat")
+    String file_name = new SimpleDateFormat("yyyy_mm_ss").format(new Date());
         String new_name = "file_" + file_name + "_";
         File sd_directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(new_name, ".3gp", sd_directory);
@@ -326,11 +326,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         sr.setRefreshing(false);
     }
 
-    public class myWebClient extends WebViewClient {
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-        }
+    public class myWebClient extends WebViewClient {@Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+    }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
