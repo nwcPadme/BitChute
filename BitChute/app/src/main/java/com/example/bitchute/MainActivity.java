@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mywebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         mywebView.setWebViewClient(new Callback());
         mywebView.loadUrl(webview_url);
-        
+
 
         mywebView.setWebChromeClient(new WebChromeClient() {
 
@@ -326,10 +326,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         sr.setRefreshing(false);
     }
 
-    public class myWebClient extends WebViewClient {@Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        super.onPageStarted(view, url, favicon);
-    }
+    public class myWebClient extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
