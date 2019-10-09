@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -114,16 +115,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mywebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = mywebView.getSettings();
 
-            webSettings.setJavaScriptEnabled(true);
-            webSettings.setLoadWithOverviewMode(true);
-            webSettings.setUseWideViewPort(true);
-            webSettings.setSupportZoom(true);
-            webSettings.setDatabaseEnabled(true);
-            webSettings.setBuiltInZoomControls(false);
-            webSettings.setAllowFileAccess(true);
-            webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            webSettings.setDomStorageEnabled(true);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        webSettings.setDomStorageEnabled(true);
 
         if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode(0);
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mywebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         mywebView.getSettings().setAppCacheEnabled(true);
         mywebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+        mywebView.getSettings().setSupportMultipleWindows(true);
         mywebView.setWebViewClient(new Callback());
         mywebView.loadUrl(webview_url);
 
@@ -317,6 +319,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
+    public class ExternalLink extends WebChromeClient {
+        @Override
+        public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg)
+        {
+            WebView.HitTestResult result = view.getHitTestResult();
+            String data = result.getExtra();
+            Context context = view.getContext();
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+            context.startActivity(browserIntent);
+            return false;
+        }
+    }
+
     /*-- checking and asking for required file permissions --*/
     public boolean file_permission() {
         if (Build.VERSION.SDK_INT >= 23 && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
@@ -385,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             return true;
         }
     }
+
 
     @Override
     public void onBackPressed() {
