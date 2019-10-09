@@ -145,44 +145,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
         mywebView.setWebChromeClient(new WebChromeClient() {
-            private View mCustomView;
-            private WebChromeClient.CustomViewCallback mCustomViewCallback;
-            protected FrameLayout mFullscreenContainer;
-            private int mOriginalOrientation;
-            private int mOriginalSystemUiVisibility;
-
-            public Bitmap getDefaultVideoPoster()
-            {
-                if (mainActivity == null) {
-                    return null;
-                }
-                return BitmapFactory.decodeResource(mainActivity.getApplicationContext().getResources(), 2130837573);
-            }
-
-            public void onHideCustomView()
-            {
-                ((FrameLayout)mainActivity.getWindow().getDecorView()).removeView(this.mCustomView);
-                this.mCustomView = null;
-                mainActivity.getWindow().getDecorView().setSystemUiVisibility(this.mOriginalSystemUiVisibility);
-                mainActivity.setRequestedOrientation(this.mOriginalOrientation);
-                this.mCustomViewCallback.onCustomViewHidden();
-                this.mCustomViewCallback = null;
-            }
-
-            public void onShowCustomView(View paramView, WebChromeClient.CustomViewCallback paramCustomViewCallback)
-            {
-                if (this.mCustomView != null)
-                {
-                    onHideCustomView();
-                    return;
-                }
-                this.mCustomView = paramView;
-                this.mOriginalSystemUiVisibility = mainActivity.getWindow().getDecorView().getSystemUiVisibility();
-                this.mOriginalOrientation = mainActivity.getRequestedOrientation();
-                this.mCustomViewCallback = paramCustomViewCallback;
-                ((FrameLayout)mainActivity.getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
-                mainActivity.getWindow().getDecorView().setSystemUiVisibility(3846);
-            }
 
             /*-- openFileChooser is not a public Android API and has never been part of the SDK. --*/
 
@@ -311,6 +273,47 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public class Callback extends WebViewClient {
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             Toast.makeText(getApplicationContext(), "Failed loading app!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public class TrueFullscreen extends WebChromeClient {
+        private View mCustomView;
+        private WebChromeClient.CustomViewCallback mCustomViewCallback;
+        protected FrameLayout mFullscreenContainer;
+        private int mOriginalOrientation;
+        private int mOriginalSystemUiVisibility;
+
+        public Bitmap getDefaultVideoPoster()
+        {
+            if (mainActivity == null) {
+                return null;
+            }
+            return BitmapFactory.decodeResource(mainActivity.getApplicationContext().getResources(), 2130837573);
+        }
+
+        public void onHideCustomView()
+        {
+            ((FrameLayout)mainActivity.getWindow().getDecorView()).removeView(this.mCustomView);
+            this.mCustomView = null;
+            mainActivity.getWindow().getDecorView().setSystemUiVisibility(this.mOriginalSystemUiVisibility);
+            mainActivity.setRequestedOrientation(this.mOriginalOrientation);
+            this.mCustomViewCallback.onCustomViewHidden();
+            this.mCustomViewCallback = null;
+        }
+
+        public void onShowCustomView(View paramView, WebChromeClient.CustomViewCallback paramCustomViewCallback)
+        {
+            if (this.mCustomView != null)
+            {
+                onHideCustomView();
+                return;
+            }
+            this.mCustomView = paramView;
+            this.mOriginalSystemUiVisibility = mainActivity.getWindow().getDecorView().getSystemUiVisibility();
+            this.mOriginalOrientation = mainActivity.getRequestedOrientation();
+            this.mCustomViewCallback = paramCustomViewCallback;
+            ((FrameLayout)mainActivity.getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
+            mainActivity.getWindow().getDecorView().setSystemUiVisibility(3846);
         }
     }
 
