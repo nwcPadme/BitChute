@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setSupportMultipleWindows(true);
 
         if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode(0);
@@ -141,12 +142,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mywebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         mywebView.getSettings().setAppCacheEnabled(true);
         mywebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-        mywebView.getSettings().setSupportMultipleWindows(true);
         mywebView.setWebViewClient(new Callback());
         mywebView.loadUrl(webview_url);
 
 
         mywebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg)
+            {
+                WebView.HitTestResult result = view.getHitTestResult();
+                String data = result.getExtra();
+                Context context = view.getContext();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+                context.startActivity(browserIntent);
+                return false;
+            }
 
             /*-- openFileChooser is not a public Android API and has never been part of the SDK. --*/
 
@@ -316,19 +326,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             this.mCustomViewCallback = paramCustomViewCallback;
             ((FrameLayout)mainActivity.getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
             mainActivity.getWindow().getDecorView().setSystemUiVisibility(3846);
-        }
-    }
-
-    public class ExternalLink extends WebChromeClient {
-        @Override
-        public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg)
-        {
-            WebView.HitTestResult result = view.getHitTestResult();
-            String data = result.getExtra();
-            Context context = view.getContext();
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
-            context.startActivity(browserIntent);
-            return false;
         }
     }
 
