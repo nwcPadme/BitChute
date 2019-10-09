@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private WebView mywebView;
+    private Activity mainActivity = this;
     private SwipeRefreshLayout sr;
     private static String file_type = "*/*"; // file types to be allowed for upload
     private boolean multiple_files = true; // allowing multiple file upload
@@ -142,6 +145,44 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
         mywebView.setWebChromeClient(new WebChromeClient() {
+            private View mCustomView;
+            private WebChromeClient.CustomViewCallback mCustomViewCallback;
+            protected FrameLayout mFullscreenContainer;
+            private int mOriginalOrientation;
+            private int mOriginalSystemUiVisibility;
+
+            public Bitmap getDefaultVideoPoster()
+            {
+                if (mainActivity == null) {
+                    return null;
+                }
+                return BitmapFactory.decodeResource(mainActivity.getApplicationContext().getResources(), 2130837573);
+            }
+
+            public void onHideCustomView()
+            {
+                ((FrameLayout)mainActivity.getWindow().getDecorView()).removeView(this.mCustomView);
+                this.mCustomView = null;
+                mainActivity.getWindow().getDecorView().setSystemUiVisibility(this.mOriginalSystemUiVisibility);
+                mainActivity.setRequestedOrientation(this.mOriginalOrientation);
+                this.mCustomViewCallback.onCustomViewHidden();
+                this.mCustomViewCallback = null;
+            }
+
+            public void onShowCustomView(View paramView, WebChromeClient.CustomViewCallback paramCustomViewCallback)
+            {
+                if (this.mCustomView != null)
+                {
+                    onHideCustomView();
+                    return;
+                }
+                this.mCustomView = paramView;
+                this.mOriginalSystemUiVisibility = mainActivity.getWindow().getDecorView().getSystemUiVisibility();
+                this.mOriginalOrientation = mainActivity.getRequestedOrientation();
+                this.mCustomViewCallback = paramCustomViewCallback;
+                ((FrameLayout)mainActivity.getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
+                mainActivity.getWindow().getDecorView().setSystemUiVisibility(3846);
+            }
 
             /*-- openFileChooser is not a public Android API and has never been part of the SDK. --*/
 
